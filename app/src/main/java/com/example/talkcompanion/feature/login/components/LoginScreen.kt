@@ -1,4 +1,4 @@
-package com.example.talkcompanion.components
+package com.example.talkcompanion.feature.login.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
