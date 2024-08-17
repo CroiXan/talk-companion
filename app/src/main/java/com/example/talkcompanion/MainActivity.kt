@@ -1,6 +1,7 @@
 package com.example.talkcompanion
 
 import android.os.Bundle
+import android.speech.tts.TextToSpeech
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -12,11 +13,18 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.talkcompanion.feature.login.components.LoginScreen
+import com.example.talkcompanion.feature.speech.functions.destroyTextToSpeech
+import com.example.talkcompanion.feature.speech.functions.initTextToSpeech
 import com.example.talkcompanion.ui.theme.TalkCompanionTheme
+import java.util.Locale
 
-class MainActivity : ComponentActivity() {
+class MainActivity : ComponentActivity(), TextToSpeech.OnInitListener {
+    lateinit var tts: TextToSpeech
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        tts = TextToSpeech(this, this)
+
         enableEdgeToEdge()
         setContent {
             TalkCompanionTheme {
@@ -29,6 +37,16 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
+    }
+
+    override fun onInit(status: Int) {
+        initTextToSpeech(status,tts)
+    }
+
+
+    override fun onDestroy() {
+        destroyTextToSpeech(tts)
+        super.onDestroy()
     }
 }
 
