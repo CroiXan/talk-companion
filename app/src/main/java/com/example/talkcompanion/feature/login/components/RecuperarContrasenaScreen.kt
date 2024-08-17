@@ -1,6 +1,7 @@
 package com.example.talkcompanion.feature.login.components
 
 import android.content.Context
+import android.content.Intent
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -21,6 +22,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.talkcompanion.LoginActivity
+import com.example.talkcompanion.data.model.User
+import com.example.talkcompanion.feature.login.functions.findUserByEmail
+import com.example.talkcompanion.feature.usermanagement.functions.createOrUpdateUser
 
 @Composable
 fun RecuperarScreen(context: Context, innerPadding: PaddingValues){
@@ -39,6 +44,10 @@ fun RecuperarScreen(context: Context, innerPadding: PaddingValues){
 
     var repetirContrasena by remember {
         mutableStateOf("")
+    }
+
+    var foundUser by remember {
+        mutableStateOf(User("", "", "", "", "", "", ""))
     }
 
     var mostrarCamposEnvio by rememberSaveable { mutableStateOf(true) }
@@ -70,6 +79,7 @@ fun RecuperarScreen(context: Context, innerPadding: PaddingValues){
             )
             Button(
                 onClick = {
+                    foundUser = findUserByEmail(email,context)
                     mostrarCamposEnvio = false
                     mostrarCamposComprobarCodigo = true},
                 modifier = Modifier
@@ -138,6 +148,24 @@ fun RecuperarScreen(context: Context, innerPadding: PaddingValues){
                     .fillMaxWidth()
                     .padding(8.dp)
             )
+            Button(
+                onClick = {
+                    if(contrasena == repetirContrasena){
+                        foundUser.password = contrasena
+                        Toast.makeText(context, "Contraseña cambiada", Toast.LENGTH_SHORT).show()
+                        createOrUpdateUser(context, foundUser)
+                        val intent = Intent(context, LoginActivity::class.java)
+                        context.startActivity(intent)
+                    }else{
+                        Toast.makeText(context, "Las contraseñas no coinciden", Toast.LENGTH_SHORT).show()
+                    }
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp)
+            ) {
+                Text(text = "Confirmar")
+            }
         }
     }
 
