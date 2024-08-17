@@ -19,6 +19,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.talkcompanion.feature.login.components.LoginScreen
+import com.example.talkcompanion.feature.login.functions.doLogout
+import com.example.talkcompanion.feature.login.functions.isLoggedIn
 import com.example.talkcompanion.feature.speech.functions.destroyTextToSpeech
 import com.example.talkcompanion.ui.theme.TalkCompanionTheme
 import java.util.Locale
@@ -27,6 +29,7 @@ class MainActivity : ComponentActivity(), TextToSpeech.OnInitListener {
     private lateinit var tts: TextToSpeech
     private lateinit var speechRecognizer: SpeechRecognizer
     private var demoText: String = "Demo"
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -78,7 +81,6 @@ class MainActivity : ComponentActivity(), TextToSpeech.OnInitListener {
         setContent {
             TalkCompanionTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    LoginScreen()
 
                     Column{
                         ButtonExample(onClick = { startSpeechRecognition() })
@@ -86,6 +88,11 @@ class MainActivity : ComponentActivity(), TextToSpeech.OnInitListener {
                             name = demoText,
                             modifier = Modifier.padding(innerPadding)
                         )
+                        ButtonExample("Logout",onClick = {
+                            doLogout(this@MainActivity)
+                            val intent = Intent(this@MainActivity, LoginActivity::class.java)
+                            this@MainActivity.startActivity(intent)
+                            this@MainActivity.finish()})
                     }
 
                 }
@@ -94,7 +101,8 @@ class MainActivity : ComponentActivity(), TextToSpeech.OnInitListener {
     }
 
     override fun onInit(status: Int) {
-        //initTextToSpeech(status,tts)
+        checkSession()
+
         if (status == TextToSpeech.SUCCESS) {
             val result = tts.setLanguage(Locale.US)
             if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
@@ -121,6 +129,14 @@ class MainActivity : ComponentActivity(), TextToSpeech.OnInitListener {
 
         speechRecognizer.startListening(intent)
     }
+
+    private fun checkSession(){
+        if(!isLoggedIn(this)){
+            val intent = Intent(this, LoginActivity::class.java)
+            startActivity(intent)
+            finish()
+        }
+    }
 }
 
 @Composable
@@ -140,8 +156,8 @@ fun GreetingPreview() {
 }
 
 @Composable
-fun ButtonExample(onClick: () -> Unit) {
+fun ButtonExample(text: String = "Prueba",onClick: () -> Unit) {
     Button(onClick = { onClick() }) {
-        Text("Prueba")
+        Text(text)
     }
 }

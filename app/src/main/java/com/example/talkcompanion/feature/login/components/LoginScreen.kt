@@ -1,7 +1,13 @@
 package com.example.talkcompanion.feature.login.components
 
+import android.content.Context
+import android.content.Intent
+import android.widget.Toast
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -18,9 +24,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.talkcompanion.MainActivity
+import com.example.talkcompanion.RecuperarContrasenaActivity
+import com.example.talkcompanion.RegistroActivity
+import com.example.talkcompanion.feature.login.functions.doLogin
 
 @Composable
-fun LoginScreen() {
+fun LoginScreen(innerPadding: PaddingValues,context: Context) {
     var email by remember {
         mutableStateOf("")
     }
@@ -30,7 +40,7 @@ fun LoginScreen() {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16. dp),
+            .padding(innerPadding),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
@@ -46,7 +56,7 @@ fun LoginScreen() {
             },
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(8. dp)
+                .padding(8.dp)
         )
 
         TextField(
@@ -55,21 +65,53 @@ fun LoginScreen() {
                 password = it
             },
             label = {
-                Text("Password")
+                Text("Contraseña")
             },
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(8. dp),
+                .padding(8.dp),
             visualTransformation = PasswordVisualTransformation()
         )
         Button(
             onClick = {
-                /* Handle login logic here */ },
+                if( doLogin(email, password, context) ){
+                    Toast.makeText(context, "Login correcto", Toast.LENGTH_SHORT).show()
+                    val intent = Intent(context, MainActivity::class.java)
+                    context.startActivity(intent)
+                }else{
+                    Toast.makeText(context, "Login incorrecto", Toast.LENGTH_SHORT).show()
+                } },
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(8. dp)
+                .padding(8.dp)
         ) {
             Text(text = "Login")
         }
+
+        Row {
+            Text(
+                text = "Recuperar contraseña",
+                fontSize = 16.sp,
+                modifier = Modifier
+                    .clickable {
+                        val intent = Intent(context, RecuperarContrasenaActivity::class.java)
+                        context.startActivity(intent)
+                    }
+                    .padding(6.dp)
+            )
+
+            Text(
+                text = "Registrarse",
+                fontSize = 16.sp,
+                modifier = Modifier
+                    .clickable {
+                        val intent = Intent(context, RegistroActivity::class.java)
+                        context.startActivity(intent)
+                    }
+                    .padding(6.dp)
+            )
+        }
+
     }
 }
+
