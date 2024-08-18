@@ -47,5 +47,5 @@ fun findUserByEmail(email: String,context: Context): User {
     if (user != null) {
         return user
     }
-    return User("","", "", "", "", "", "")
+    return User("","", "", "", "", "")
 }

@@ -31,8 +31,8 @@ fun createOrUpdateUser(context: Context, user: User){
 
 private fun defaultUserList(): ArrayList<User>{
     val userList = arrayListOf(
-        User("prueba", "prueba@mail.com", "prueba", "Juan", "Perez", "987654321", ""),
-        User("prueba2", "prueba2@mail.com", "prueba2", "Pedro", "Flores", "912345678", ""))
+        User("prueba", "prueba@mail.com", "prueba", "Juan", "Perez", ""),
+        User("prueba2", "prueba2@mail.com", "prueba2", "Pedro", "Flores", ""))
     return userList
 }
 

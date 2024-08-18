@@ -1,4 +1,4 @@
-package com.example.talkcompanion.feature.login.components
+package com.example.talkcompanion.feature.usermanagement.components
 
 import android.content.Context
 import android.content.Intent
@@ -47,7 +47,7 @@ fun RecuperarScreen(context: Context, innerPadding: PaddingValues){
     }
 
     var foundUser by remember {
-        mutableStateOf(User("", "", "", "", "", "", ""))
+        mutableStateOf(User("", "", "", "", "", ""))
     }
 
     var mostrarCamposEnvio by rememberSaveable { mutableStateOf(true) }
