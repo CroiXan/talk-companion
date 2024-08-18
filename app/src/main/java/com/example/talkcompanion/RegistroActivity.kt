@@ -23,7 +23,11 @@ class RegistroActivity : ComponentActivity() {
             TalkCompanionTheme {
                 val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
                 Scaffold(modifier = Modifier.fillMaxSize(),
-                    topBar = { TopBarComponent(false,scrollBehavior, onArrowBack = { finish() }) }) { innerPadding ->
+                    topBar = { TopBarComponent(
+                        showMenu = false,
+                        showBack = false,
+                        context = this,
+                        scrollBehavior = scrollBehavior, onArrowBack = { finish() }) }) { innerPadding ->
                     RegistroScreen(innerPadding,this)
                 }
             }
