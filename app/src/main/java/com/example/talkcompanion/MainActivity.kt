@@ -9,6 +9,7 @@ import android.speech.tts.TextToSpeech
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -19,12 +20,18 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.talkcompanion.common.components.TopBarComponent
 import com.example.talkcompanion.feature.login.components.LoginScreen
 import com.example.talkcompanion.feature.login.functions.doLogout
 import com.example.talkcompanion.feature.login.functions.isLoggedIn
+import com.example.talkcompanion.feature.speech.components.SpeechScreen
+import com.example.talkcompanion.feature.speech.functions.SpeechViewModel
 import com.example.talkcompanion.feature.speech.functions.destroyTextToSpeech
 import com.example.talkcompanion.ui.theme.TalkCompanionTheme
 import java.util.Locale
@@ -32,7 +39,7 @@ import java.util.Locale
 class MainActivity : ComponentActivity(), TextToSpeech.OnInitListener {
     private lateinit var tts: TextToSpeech
     private lateinit var speechRecognizer: SpeechRecognizer
-    private var demoText: String = "Demo"
+    private val speechViewModel: SpeechViewModel by viewModels()
 
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -44,7 +51,7 @@ class MainActivity : ComponentActivity(), TextToSpeech.OnInitListener {
 
         speechRecognizer.setRecognitionListener(object : RecognitionListener {
             override fun onReadyForSpeech(p0: Bundle?) {
-
+                speechViewModel.updateRecognizedText("Escuchando...")
             }
 
             override fun onBeginningOfSpeech() {
@@ -70,6 +77,11 @@ class MainActivity : ComponentActivity(), TextToSpeech.OnInitListener {
             override fun onResults(results: Bundle)  {
                 val data: ArrayList<String>? = results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)
                 println("Speech recognition results received: $data")
+                if (data != null) {
+                    speechViewModel.updateRecognizedText(data[0])
+                } else {
+                    speechViewModel.updateRecognizedText("No se pudo reconocer el texto")
+                }
             }
 
             override fun onPartialResults(p0: Bundle?) {
@@ -87,20 +99,13 @@ class MainActivity : ComponentActivity(), TextToSpeech.OnInitListener {
             TalkCompanionTheme {
                 val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
                 Scaffold(modifier = Modifier.fillMaxSize(),
-                        topBar = { TopBarComponent(true,scrollBehavior, onArrowBack = { finish() }) }) { innerPadding ->
+                        topBar = { TopBarComponent(
+                            showMenu = true,
+                            showBack = false,
+                            context = this,
+                            scrollBehavior = scrollBehavior, onArrowBack = { finish() }) }) { innerPadding ->
 
-                    Column{
-                        ButtonExample(onClick = { startSpeechRecognition() })
-                        Greeting(
-                            name = demoText,
-                            modifier = Modifier.padding(innerPadding)
-                        )
-                        ButtonExample("Logout",onClick = {
-                            doLogout(this@MainActivity)
-                            val intent = Intent(this@MainActivity, LoginActivity::class.java)
-                            this@MainActivity.startActivity(intent)
-                            this@MainActivity.finish()})
-                    }
+                    SpeechScreen(innerPadding,startSpeechRecognition = { startSpeechRecognition() }, speechViewModel, tts)
 
                 }
             }
@@ -111,7 +116,7 @@ class MainActivity : ComponentActivity(), TextToSpeech.OnInitListener {
         checkSession()
 
         if (status == TextToSpeech.SUCCESS) {
-            val result = tts.setLanguage(Locale.US)
+            val result = tts.setLanguage(Locale("es", "CL"))
             if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
                 println("Idioma no soportado o datos faltantes")
             }
@@ -131,8 +136,8 @@ class MainActivity : ComponentActivity(), TextToSpeech.OnInitListener {
     private fun startSpeechRecognition() {
         val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
-        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, "en-US")  // Configura el idioma
-        intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "Speak now...")
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, "es-CL")
+        intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "Habla ahora...")
 
         speechRecognizer.startListening(intent)
     }
@@ -143,28 +148,5 @@ class MainActivity : ComponentActivity(), TextToSpeech.OnInitListener {
             startActivity(intent)
             finish()
         }
-    }
-}
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = name,
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    TalkCompanionTheme {
-        Greeting("Android")
-    }
-}
-
-@Composable
-fun ButtonExample(text: String = "Prueba",onClick: () -> Unit) {
-    Button(onClick = { onClick() }) {
-        Text(text)
     }
 }

@@ -23,7 +23,10 @@ class CuentaUsuarioActivity : ComponentActivity() {
             TalkCompanionTheme {
                 val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
                 Scaffold(modifier = Modifier.fillMaxSize(),
-                    topBar = { TopBarComponent(true,scrollBehavior, onArrowBack = { finish() }) }) { innerPadding ->
+                    topBar = { TopBarComponent(true,
+                        showBack = true,
+                        context = this,
+                        scrollBehavior = scrollBehavior, onArrowBack = { finish() }) }) { innerPadding ->
                     DetalleUsuarioScreen(innerPadding,this)
                 }
             }
