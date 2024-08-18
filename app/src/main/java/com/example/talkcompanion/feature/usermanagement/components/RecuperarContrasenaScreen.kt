@@ -20,6 +20,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.talkcompanion.LoginActivity
@@ -134,7 +135,8 @@ fun RecuperarScreen(context: Context, innerPadding: PaddingValues){
                 },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(8.dp)
+                    .padding(8.dp),
+                visualTransformation = PasswordVisualTransformation()
             )
             TextField(
                 value = repetirContrasena,
@@ -146,7 +148,8 @@ fun RecuperarScreen(context: Context, innerPadding: PaddingValues){
                 },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(8.dp)
+                    .padding(8.dp),
+                visualTransformation = PasswordVisualTransformation()
             )
             Button(
                 onClick = {

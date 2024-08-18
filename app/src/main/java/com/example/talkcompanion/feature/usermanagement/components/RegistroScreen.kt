@@ -21,6 +21,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.talkcompanion.LoginActivity
@@ -134,7 +135,8 @@ fun RegistroScreen(innerPadding: PaddingValues, context: Context) {
                     width = 2.dp,
                     color = if (isContrasenaEmpty || !isSameContrasena) Color.Red else Color.Transparent,
                     shape = MaterialTheme.shapes.small
-                )
+                ),
+            visualTransformation = PasswordVisualTransformation()
         )
         if (isContrasenaEmpty) {
             Text(text = "La contraseña no puede estar vacía",
@@ -157,7 +159,8 @@ fun RegistroScreen(innerPadding: PaddingValues, context: Context) {
                     width = 2.dp,
                     color = if (!isSameContrasena) Color.Red else Color.Transparent,
                     shape = MaterialTheme.shapes.small
-                )
+                ),
+            visualTransformation = PasswordVisualTransformation()
         )
         if (!isSameContrasena) {
             Text(text = "Las contraseñas no coinciden",
