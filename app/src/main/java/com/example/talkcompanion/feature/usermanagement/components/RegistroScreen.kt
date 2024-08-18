@@ -170,7 +170,7 @@ fun RegistroScreen(innerPadding: PaddingValues, context: Context) {
             isEmailEmpty = email.isEmpty()
             isContrasenaEmpty = contrasena.isEmpty()
             isSameContrasena = contrasena == repetirContrasena
-            if (isUserNameEmpty || isEmailEmpty || isContrasenaEmpty || !isSameContrasena) {
+            if (!isUserNameEmpty && !isEmailEmpty && !isContrasenaEmpty && isSameContrasena) {
                 val newUser = User(userName, email, contrasena, firstName, lastName, "")
                 createOrUpdateUser(context, newUser)
                 Toast.makeText(context, "Registro correcto", Toast.LENGTH_SHORT).show()

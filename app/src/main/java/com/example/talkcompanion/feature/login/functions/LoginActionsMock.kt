@@ -49,3 +49,12 @@ fun findUserByEmail(email: String,context: Context): User {
     }
     return User("","", "", "", "", "")
 }
+
+fun getCurrentUser(context: Context): User {
+    val userLists = userList(context)
+    val user = userLists.find { it.userName == getCurrentUserName(context, "currentUserName") }
+    if (user != null) {
+        return user
+    }
+    return User("","", "", "", "", "")
+}

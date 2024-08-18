@@ -11,10 +11,10 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.ui.Modifier
 import com.example.talkcompanion.common.components.TopBarComponent
-import com.example.talkcompanion.feature.usermanagement.components.RegistroScreen
+import com.example.talkcompanion.feature.usermanagement.components.DetalleUsuarioScreen
 import com.example.talkcompanion.ui.theme.TalkCompanionTheme
 
-class RegistroActivity : ComponentActivity() {
+class CuentaUsuarioActivity : ComponentActivity() {
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -23,8 +23,8 @@ class RegistroActivity : ComponentActivity() {
             TalkCompanionTheme {
                 val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
                 Scaffold(modifier = Modifier.fillMaxSize(),
-                    topBar = { TopBarComponent(false,scrollBehavior, onArrowBack = { finish() }) }) { innerPadding ->
-                    RegistroScreen(innerPadding,this)
+                    topBar = { TopBarComponent(true,scrollBehavior, onArrowBack = { finish() }) }) { innerPadding ->
+                    DetalleUsuarioScreen(innerPadding,this)
                 }
             }
         }

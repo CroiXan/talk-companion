@@ -24,7 +24,7 @@ class RecuperarContrasenaActivity : ComponentActivity() {
             TalkCompanionTheme {
                 val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
                 Scaffold(modifier = Modifier.fillMaxSize(),
-                    topBar = { TopBarComponent(scrollBehavior, onArrowBack = { finish() }) }) { innerPadding ->
+                    topBar = { TopBarComponent(false,scrollBehavior, onArrowBack = { finish() }) }) { innerPadding ->
 
                     RecuperarScreen(this, innerPadding)
                 }
