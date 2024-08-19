@@ -26,7 +26,7 @@ class RecuperarContrasenaActivity : ComponentActivity() {
                 Scaffold(modifier = Modifier.fillMaxSize(),
                     topBar = { TopBarComponent(
                         showMenu = false,
-                        showBack = false,
+                        showBack = true,
                         context = this,
                         scrollBehavior = scrollBehavior, onArrowBack = { finish() }) }) { innerPadding ->
 
