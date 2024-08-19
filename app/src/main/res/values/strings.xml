@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">TalkCompanion</string>
+    <string name="title_activity_login">LoginActivity</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_activity_test">Test</string>
+    <string name="title_activity_recuperar_contrasena">RecuperarContrasenaActivity</string>
+    <string name="title_activity_registro">RegistroActivity</string>
+    <string name="title_activity_cuenta_usuario">CuentaUsuarioActivity</string>
 </resources>
