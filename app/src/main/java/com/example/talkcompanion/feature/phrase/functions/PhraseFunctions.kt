@@ -35,3 +35,24 @@ fun addPhraseList(context: Context, newPhrase: String): List<Phrase>{
     savePhraseListMock(context, Gson().toJson(phraseList))
     return userPhraseList + listOf(newPhraseItem)
 }
+
+fun updateUserPhrases(context: Context, userPhrases: List<Phrase>){
+    val phraseList = getPhraseList(context)
+
+    for (currentPhrase in userPhrases){
+        val indexOfPhraseId = phraseList.indexOfFirst { it.id == currentPhrase.id }
+        if(indexOfPhraseId >= 0){
+            phraseList[indexOfPhraseId].phrase = currentPhrase.phrase
+            phraseList[indexOfPhraseId].orderNumer = currentPhrase.orderNumer
+        }
+    }
+
+    savePhraseListMock(context, Gson().toJson(phraseList))
+}
+
+fun deleteItemById(context: Context, phraseId: Int): List<Phrase>{
+    val phraseList = getPhraseList(context)
+    val resultList = phraseList.filter { it.id != phraseId }.toTypedArray()
+    savePhraseListMock(context, Gson().toJson(resultList))
+    return getPhraseListByUserName(context)
+}
