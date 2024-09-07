@@ -33,7 +33,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.talkcompanion.data.model.Phrase
 import com.example.talkcompanion.feature.phrase.functions.addPhraseList
-import com.example.talkcompanion.feature.phrase.functions.deleteItemById
+import com.example.talkcompanion.feature.phrase.functions.deletePhraseById
 import com.example.talkcompanion.feature.phrase.functions.getPhraseListByUserName
 import com.example.talkcompanion.feature.phrase.functions.updateUserPhrases
 
@@ -96,7 +96,7 @@ fun PhraseManagerScreen(context: Context, innerPadding: PaddingValues){
                                 top = 4.dp,
                                 end = 4.dp,
                                 bottom = 4.dp),
-                            onClick = { phraseList = deleteItemById(context, phrase.id) }) {
+                            onClick = { phraseList = deletePhraseById(context, phrase.id) }) {
                             Icon(
                                 imageVector = Icons.Filled.Delete,
                                 contentDescription = "Borrar Frase"
@@ -159,4 +159,3 @@ private fun changePhrasePosition(context: Context, phraseList: List<Phrase>,phra
     updateUserPhrases(context, phraseList)
     return phraseList.sortedBy { it.orderNumer }
 }
-

@@ -30,7 +30,11 @@ fun addPhraseList(context: Context, newPhrase: String): List<Phrase>{
     if (phraseList.size > 0){
         maxId = phraseList.maxBy { it.id }.id
     }
-    val newPhraseItem = Phrase(maxId + 1, userName, newPhrase, userPhraseList.size + 1)
+    var orderNumber = 0
+    if (userPhraseList.isNotEmpty()){
+        orderNumber = userPhraseList.maxBy { it.orderNumer }.orderNumer
+    }
+    val newPhraseItem = Phrase(maxId + 1, userName, newPhrase, orderNumber + 1)
     phraseList.add(newPhraseItem)
     savePhraseListMock(context, Gson().toJson(phraseList))
     return userPhraseList + listOf(newPhraseItem)
@@ -50,9 +54,23 @@ fun updateUserPhrases(context: Context, userPhrases: List<Phrase>){
     savePhraseListMock(context, Gson().toJson(phraseList))
 }
 
-fun deleteItemById(context: Context, phraseId: Int): List<Phrase>{
+fun deletePhraseById(context: Context, phraseId: Int): List<Phrase>{
+    updatePhrasePositionsBeforeDelete(context,phraseId)
     val phraseList = getPhraseList(context)
     val resultList = phraseList.filter { it.id != phraseId }.toTypedArray()
     savePhraseListMock(context, Gson().toJson(resultList))
     return getPhraseListByUserName(context)
+}
+
+private fun updatePhrasePositionsBeforeDelete(context: Context, phraseId: Int){
+    val userPhraseList = getPhraseListByUserName(context)
+    val indexOfPhraseId = userPhraseList.indexOfFirst { it.id == phraseId }
+
+    for (currentPhrase in userPhraseList){
+        if (userPhraseList[indexOfPhraseId].orderNumer < currentPhrase.orderNumer){
+            currentPhrase.orderNumer -= 1
+        }
+    }
+
+    updateUserPhrases(context, userPhraseList)
 }
