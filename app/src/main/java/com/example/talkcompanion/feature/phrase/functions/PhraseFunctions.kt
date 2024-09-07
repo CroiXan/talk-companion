@@ -1,6 +1,7 @@
-package com.example.talkcompanion.data.functions
+package com.example.talkcompanion.feature.phrase.functions
 
 import android.content.Context
+import android.util.Log
 import com.example.talkcompanion.data.model.Phrase
 import com.example.talkcompanion.feature.login.functions.getCurrentUserName
 import com.example.talkcompanion.feature.usermanagement.functions.getPhraseListMock
@@ -21,12 +22,16 @@ private fun getPhraseList(context: Context): ArrayList<Phrase> {
     return ArrayList<Phrase>()
 }
 
-fun addPhraseList(context: Context, newPhrase: String){
+fun addPhraseList(context: Context, newPhrase: String): List<Phrase>{
     val userName = getCurrentUserName(context, "currentUserName")?:""
     val userPhraseList = getPhraseListByUserName(context)
     val phraseList = getPhraseList(context)
-    val maxId = phraseList.maxBy { it.id }.id
+    var maxId = 0
+    if (phraseList.size > 0){
+        maxId = phraseList.maxBy { it.id }.id
+    }
     val newPhraseItem = Phrase(maxId + 1, userName, newPhrase, userPhraseList.size + 1)
     phraseList.add(newPhraseItem)
     savePhraseListMock(context, Gson().toJson(phraseList))
+    return userPhraseList + listOf(newPhraseItem)
 }
