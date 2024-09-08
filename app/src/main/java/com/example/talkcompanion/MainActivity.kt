@@ -2,6 +2,7 @@ package com.example.talkcompanion
 
 import android.content.Intent
 import android.os.Bundle
+import android.speech.SpeechRecognizer
 import android.speech.tts.TextToSpeech
 import android.util.Log
 import androidx.activity.ComponentActivity
@@ -21,20 +22,24 @@ import com.example.talkcompanion.data.model.UserPhraseViewModel
 import com.example.talkcompanion.feature.login.functions.isLoggedIn
 import com.example.talkcompanion.feature.phrase.functions.getPhraseListByUserName
 import com.example.talkcompanion.feature.speech.functions.destroyTextToSpeech
+import com.example.talkcompanion.feature.speech.functions.recognitionListener
 import com.example.talkcompanion.ui.theme.TalkCompanionTheme
 import java.util.Locale
 
 class MainActivity : ComponentActivity(), TextToSpeech.OnInitListener  {
     private lateinit var tts: TextToSpeech
     private lateinit var userPhrases: UserPhraseViewModel
+    private lateinit var speechRecognizer: SpeechRecognizer
 
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         userPhrases = ViewModelProvider(this).get(UserPhraseViewModel::class.java)
-
         tts = TextToSpeech(this, this)
+
+        speechRecognizer = SpeechRecognizer.createSpeechRecognizer(this)
+        speechRecognizer.setRecognitionListener(recognitionListener())
 
         enableEdgeToEdge()
         checkSession()
@@ -47,7 +52,7 @@ class MainActivity : ComponentActivity(), TextToSpeech.OnInitListener  {
                             context = this,
                             scrollBehavior = scrollBehavior, onArrowBack = { finish() }) }) { innerPadding ->
 
-                    DashboardMockScreen(innerPadding,this,tts,userPhrases)
+                    DashboardMockScreen(innerPadding,this,tts,userPhrases,speechRecognizer)
 
                 }
             }

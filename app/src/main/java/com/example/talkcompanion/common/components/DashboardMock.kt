@@ -1,6 +1,7 @@
 package com.example.talkcompanion.common.components
 
 import android.content.Context
+import android.speech.SpeechRecognizer
 import android.speech.tts.TextToSpeech
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -32,9 +33,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.talkcompanion.data.model.UserPhraseViewModel
 import com.example.talkcompanion.feature.speech.functions.speak
+import com.example.talkcompanion.feature.speech.functions.startSpeechRecognition
 
 @Composable
-fun DashboardMockScreen(innerPadding: PaddingValues, context: Context, textToSpeechInstance: TextToSpeech, newUserPhrases: UserPhraseViewModel) {
+fun DashboardMockScreen(innerPadding: PaddingValues, context: Context, textToSpeechInstance: TextToSpeech, newUserPhrases: UserPhraseViewModel, speechRecognizer: SpeechRecognizer) {
     var frase by remember { mutableStateOf("") }
     var resultado by remember { mutableStateOf("Dashboard") }
     val userPhrases by newUserPhrases.userPhrases.observeAsState(emptyList())
@@ -58,7 +60,7 @@ fun DashboardMockScreen(innerPadding: PaddingValues, context: Context, textToSpe
             modifier = Modifier.padding(4.dp).fillMaxWidth(),
             horizontalArrangement = Arrangement.Center
         ){
-            ElevatedButton(onClick = {  },
+            ElevatedButton(onClick = { startSpeechRecognition(speechRecognizer) },
                 modifier = Modifier.padding(4.dp)
                     .size(width = 150.dp, height = 150.dp),
                 shape = RoundedCornerShape(100,100,100,100)) {
