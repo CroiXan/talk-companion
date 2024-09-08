@@ -25,6 +25,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.talkcompanion.common.components.DashboardMockScreen
 import com.example.talkcompanion.common.components.TopBarComponent
 import com.example.talkcompanion.data.model.Phrase
+import com.example.talkcompanion.data.model.SpeechResultViewModel
 import com.example.talkcompanion.data.model.UserPhraseViewModel
 import com.example.talkcompanion.feature.login.functions.isLoggedIn
 import com.example.talkcompanion.feature.phrase.functions.getPhraseListByUserName
@@ -37,6 +38,7 @@ class MainActivity : ComponentActivity(), TextToSpeech.OnInitListener  {
     private lateinit var tts: TextToSpeech
     private lateinit var userPhrases: UserPhraseViewModel
     private lateinit var speechRecognizer: SpeechRecognizer
+    private lateinit var speechResult: SpeechResultViewModel
 
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -53,10 +55,11 @@ class MainActivity : ComponentActivity(), TextToSpeech.OnInitListener  {
         }
 
         userPhrases = ViewModelProvider(this).get(UserPhraseViewModel::class.java)
+        speechResult = ViewModelProvider(this).get(SpeechResultViewModel::class.java)
         tts = TextToSpeech(this, this)
 
         speechRecognizer = SpeechRecognizer.createSpeechRecognizer(this)
-        speechRecognizer.setRecognitionListener(recognitionListener())
+        speechRecognizer.setRecognitionListener(recognitionListener(speechResult))
 
         enableEdgeToEdge()
         checkSession()
@@ -69,7 +72,7 @@ class MainActivity : ComponentActivity(), TextToSpeech.OnInitListener  {
                             context = this,
                             scrollBehavior = scrollBehavior, onArrowBack = { finish() }) }) { innerPadding ->
 
-                    DashboardMockScreen(innerPadding,this,tts,userPhrases,speechRecognizer)
+                    DashboardMockScreen(innerPadding,this,tts,userPhrases,speechRecognizer,speechResult)
 
                 }
             }

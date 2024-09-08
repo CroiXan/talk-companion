@@ -31,14 +31,15 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.talkcompanion.data.model.SpeechResultViewModel
 import com.example.talkcompanion.data.model.UserPhraseViewModel
 import com.example.talkcompanion.feature.speech.functions.speak
 import com.example.talkcompanion.feature.speech.functions.startSpeechRecognition
 
 @Composable
-fun DashboardMockScreen(innerPadding: PaddingValues, context: Context, textToSpeechInstance: TextToSpeech, newUserPhrases: UserPhraseViewModel, speechRecognizer: SpeechRecognizer) {
+fun DashboardMockScreen(innerPadding: PaddingValues, context: Context, textToSpeechInstance: TextToSpeech, newUserPhrases: UserPhraseViewModel, speechRecognizer: SpeechRecognizer, speechResult: SpeechResultViewModel) {
     var frase by remember { mutableStateOf("") }
-    var resultado by remember { mutableStateOf("Dashboard") }
+    val resultado by speechResult.speechResult.observeAsState("Dashboard")
     val userPhrases by newUserPhrases.userPhrases.observeAsState(emptyList())
 
     Column(modifier = Modifier
@@ -48,7 +49,9 @@ fun DashboardMockScreen(innerPadding: PaddingValues, context: Context, textToSpe
         verticalArrangement = Arrangement.SpaceBetween) {
 
         Row(
-            modifier = Modifier.padding(4.dp).fillMaxWidth(),
+            modifier = Modifier
+                .padding(4.dp)
+                .fillMaxWidth(),
             horizontalArrangement = Arrangement.Center
         ){
             Text(text = resultado,
@@ -57,11 +60,14 @@ fun DashboardMockScreen(innerPadding: PaddingValues, context: Context, textToSpe
         }
 
         Row(
-            modifier = Modifier.padding(4.dp).fillMaxWidth(),
+            modifier = Modifier
+                .padding(4.dp)
+                .fillMaxWidth(),
             horizontalArrangement = Arrangement.Center
         ){
             ElevatedButton(onClick = { startSpeechRecognition(speechRecognizer) },
-                modifier = Modifier.padding(4.dp)
+                modifier = Modifier
+                    .padding(4.dp)
                     .size(width = 150.dp, height = 150.dp),
                 shape = RoundedCornerShape(100,100,100,100)) {
                 Text(text = "Escuchar")

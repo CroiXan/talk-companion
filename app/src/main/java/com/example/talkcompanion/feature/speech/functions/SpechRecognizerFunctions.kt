@@ -6,11 +6,12 @@ import android.speech.SpeechRecognizer
 import android.speech.RecognitionListener
 import android.speech.RecognizerIntent
 import android.util.Log
+import com.example.talkcompanion.data.model.SpeechResultViewModel
 
-fun recognitionListener(): RecognitionListener{
+fun recognitionListener(speechResult: SpeechResultViewModel): RecognitionListener{
     return object : RecognitionListener {
         override fun onReadyForSpeech(p0: Bundle?) {
-            Log.d("Recognition","Escuchando...")
+            speechResult.updateSpeechResult("Escuchando...")
         }
 
         override fun onBeginningOfSpeech() {
@@ -37,9 +38,9 @@ fun recognitionListener(): RecognitionListener{
             val data: ArrayList<String>? = results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)
             println("Speech recognition results received: $data")
             if (data != null) {
-                Log.d("Recognition",data[0])
+                speechResult.updateSpeechResult(data[0])
             } else {
-                Log.d("Recognition","No se pudo reconocer el texto")
+                speechResult.updateSpeechResult("No se pudo reconocer el texto, Intentelo denuevo")
             }
         }
 
