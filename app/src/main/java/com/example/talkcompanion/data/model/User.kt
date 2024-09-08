@@ -1,12 +1,12 @@
 package com.example.talkcompanion.data.model
 
-class User {
-    var userName: String = ""
-    var email: String = ""
-    var password: String = ""
-    var firstName: String = ""
-    var lastName: String = ""
-    var profilePicture: String = ""
+open class User {
+    open var userName: String = ""
+    open var email: String = ""
+    open var password: String = ""
+    open var firstName: String = ""
+    open var lastName: String = ""
+    open var profilePicture: String = ""
 
     constructor(userName: String, email: String, password: String, firstName: String, lastName: String, profilePicture: String){
         this.userName = userName
@@ -16,4 +16,6 @@ class User {
         this.lastName = lastName
         this.profilePicture = profilePicture
     }
+
+    constructor()
 }
