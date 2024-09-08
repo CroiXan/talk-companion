@@ -32,7 +32,7 @@ class MainActivity : ComponentActivity() {
                             context = this,
                             scrollBehavior = scrollBehavior, onArrowBack = { finish() }) }) { innerPadding ->
 
-                    DashboardMockScreen(innerPadding)
+                    DashboardMockScreen(innerPadding,this)
 
                 }
             }
