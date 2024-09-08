@@ -63,3 +63,6 @@ fun startSpeechRecognition(speechRecognizer: SpeechRecognizer) {
 
     speechRecognizer.startListening(intent)
 }
+
+class languageNotFoundException(): Exception("Idioma de reconocimiento de voz no esta disponible")
+class speechRecognitionNotInitException(): Exception("Reconocimiento de voz no se logro inicializar")
