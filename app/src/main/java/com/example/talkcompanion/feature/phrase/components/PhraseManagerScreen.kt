@@ -8,19 +8,17 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -86,12 +84,12 @@ fun PhraseManagerScreen(context: Context, innerPadding: PaddingValues){
                         Text(text = phrase.phrase,
                             textAlign = TextAlign.Center,
                             modifier = Modifier.padding(4.dp))
-                        Text(text = (phrase.orderNumer.toString()),
-                            modifier = Modifier.padding(4.dp))
+                        /*Text(text = (phrase.orderNumer.toString()),
+                            modifier = Modifier.padding(4.dp))*/
 
                         Spacer(Modifier.weight(1f))
 
-                        Button(
+                        OutlinedButton(
                             modifier = Modifier.padding(
                                 start = 0.dp,
                                 top = 4.dp,
@@ -104,7 +102,7 @@ fun PhraseManagerScreen(context: Context, innerPadding: PaddingValues){
                                 contentDescription = "Borrar Frase"
                             )
                         }
-                        Button(
+                        OutlinedButton(
                             modifier = Modifier.padding(
                                 start = 4.dp,
                                 top = 4.dp,
@@ -117,7 +115,7 @@ fun PhraseManagerScreen(context: Context, innerPadding: PaddingValues){
                                 contentDescription = "Bajar Frase"
                             )
                         }
-                        Button(
+                        OutlinedButton(
                             modifier = Modifier.padding(
                                 start = 0.dp,
                                 top = 4.dp,
