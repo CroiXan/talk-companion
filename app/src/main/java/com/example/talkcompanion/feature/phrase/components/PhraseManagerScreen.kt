@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Delete
@@ -96,6 +97,7 @@ fun PhraseManagerScreen(context: Context, innerPadding: PaddingValues){
                                 top = 4.dp,
                                 end = 4.dp,
                                 bottom = 4.dp),
+                            shape = RoundedCornerShape(100),
                             onClick = { phraseList = deletePhraseById(context, phrase.id) }) {
                             Icon(
                                 imageVector = Icons.Filled.Delete,
@@ -108,6 +110,7 @@ fun PhraseManagerScreen(context: Context, innerPadding: PaddingValues){
                                 top = 4.dp,
                                 end = 0.dp,
                                 bottom = 4.dp),
+                            shape = RoundedCornerShape(20,0,0,20),
                             onClick = { phraseList = changePhrasePosition(context, phraseList, phrase.id, false) }) {
                             Icon(
                                 imageVector = Icons.Filled.KeyboardArrowDown,
@@ -120,6 +123,7 @@ fun PhraseManagerScreen(context: Context, innerPadding: PaddingValues){
                                 top = 4.dp,
                                 end = 4.dp,
                                 bottom = 4.dp),
+                            shape = RoundedCornerShape(0,20,20,0),
                             onClick = { phraseList = changePhrasePosition(context, phraseList, phrase.id, true) }) {
                             Icon(
                                 imageVector = Icons.Filled.KeyboardArrowUp,

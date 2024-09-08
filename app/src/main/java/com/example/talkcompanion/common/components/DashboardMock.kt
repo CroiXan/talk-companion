@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -81,8 +82,11 @@ fun DashboardMockScreen(innerPadding: PaddingValues, context: Context, textToSpe
                     Text("Frase")
                 },
                 modifier = Modifier.padding(4.dp)
+
             )
-            Button(onClick = {  },
+
+            Button(onClick = { speak(frase, textToSpeechInstance) },
+                shape = RoundedCornerShape(0,20,20,0),
                 modifier = Modifier.padding(4.dp)) {
                 Text(text = "Frase a Audio")
             }
