@@ -24,6 +24,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import com.example.talkcompanion.CuentaUsuarioActivity
 import com.example.talkcompanion.LoginActivity
 import com.example.talkcompanion.MainActivity
+import com.example.talkcompanion.PhraseManagerActivity
 import com.example.talkcompanion.feature.login.functions.doLogout
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -76,6 +77,14 @@ fun TopBarComponent(showMenu: Boolean, showBack: Boolean, context: Context,scrol
                             text = { Text("Usuario") },
                             onClick = {
                                 val intent = Intent(context, CuentaUsuarioActivity::class.java)
+                                context.startActivity(intent)
+                                expandirMenu = false
+                            }
+                        )
+                        DropdownMenuItem(
+                            text = { Text("Frases") },
+                            onClick = {
+                                val intent = Intent(context, PhraseManagerActivity::class.java)
                                 context.startActivity(intent)
                                 expandirMenu = false
                             }

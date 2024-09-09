@@ -42,6 +42,14 @@ fun RegistroScreen(innerPadding: PaddingValues, context: Context) {
     var repetirContrasena by remember { mutableStateOf("") }
     var isSameContrasena by remember { mutableStateOf(true) }
 
+    var validUserName by remember { mutableStateOf(true) }
+    var validEmailFormat by remember { mutableStateOf(true) }
+    var validFirstName by remember { mutableStateOf(true) }
+    var validLastName by remember { mutableStateOf(true) }
+
+    val symbolsCharacters = "[@,.()|<>&\"';+=_-]".toRegex()
+    val emailFormat = "^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$".toRegex()
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -63,7 +71,7 @@ fun RegistroScreen(innerPadding: PaddingValues, context: Context) {
                 .padding(8.dp)
                 .border(
                     width = 2.dp,
-                    color = if (isUserNameEmpty) Color.Red else Color.Transparent,
+                    color = if (isUserNameEmpty || !validUserName) Color.Red else Color.Transparent,
                     shape = MaterialTheme.shapes.small
                 )
         )
@@ -73,6 +81,13 @@ fun RegistroScreen(innerPadding: PaddingValues, context: Context) {
                 style = MaterialTheme.typography.bodySmall,
                 modifier = Modifier.padding(4.dp))
         }
+        if (!validUserName) {
+            Text(text = "El nombre de usuario no puede contener simbolos",
+                color = Color.Red,
+                style = MaterialTheme.typography.bodySmall,
+                modifier = Modifier.padding(4.dp))
+        }
+
         TextField(
             value = email,
             onValueChange = {
@@ -86,7 +101,7 @@ fun RegistroScreen(innerPadding: PaddingValues, context: Context) {
                 .padding(8.dp)
                 .border(
                     width = 2.dp,
-                    color = if (isEmailEmpty) Color.Red else Color.Transparent,
+                    color = if (isEmailEmpty || !validEmailFormat) Color.Red else Color.Transparent,
                     shape = MaterialTheme.shapes.small
                 )
         )
@@ -96,6 +111,13 @@ fun RegistroScreen(innerPadding: PaddingValues, context: Context) {
                 style = MaterialTheme.typography.bodySmall,
                 modifier = Modifier.padding(4.dp))
         }
+        if (!validEmailFormat) {
+            Text(text = "No email es un email valido",
+                color = Color.Red,
+                style = MaterialTheme.typography.bodySmall,
+                modifier = Modifier.padding(4.dp))
+        }
+
         TextField(
             value = firstName,
             onValueChange = {
@@ -107,7 +129,19 @@ fun RegistroScreen(innerPadding: PaddingValues, context: Context) {
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(8.dp)
+                .border(
+                    width = 2.dp,
+                    color = if (!validFirstName) Color.Red else Color.Transparent,
+                    shape = MaterialTheme.shapes.small
+                )
         )
+        if (!validFirstName) {
+            Text(text = "El nombre no puede contener simbolos",
+                color = Color.Red,
+                style = MaterialTheme.typography.bodySmall,
+                modifier = Modifier.padding(4.dp))
+        }
+
         TextField(
             value = lastName,
             onValueChange = {
@@ -119,7 +153,19 @@ fun RegistroScreen(innerPadding: PaddingValues, context: Context) {
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(8.dp)
+                .border(
+                    width = 2.dp,
+                    color = if (!validLastName) Color.Red else Color.Transparent,
+                    shape = MaterialTheme.shapes.small
+                )
         )
+        if (!validLastName) {
+            Text(text = "El apellido no puede contener simbolos",
+                color = Color.Red,
+                style = MaterialTheme.typography.bodySmall,
+                modifier = Modifier.padding(4.dp))
+        }
+
         TextField(
             value = contrasena,
             onValueChange = {
@@ -144,6 +190,7 @@ fun RegistroScreen(innerPadding: PaddingValues, context: Context) {
                 style = MaterialTheme.typography.bodySmall,
                 modifier = Modifier.padding(4.dp))
         }
+
         TextField(
             value = repetirContrasena,
             onValueChange = {
@@ -168,12 +215,22 @@ fun RegistroScreen(innerPadding: PaddingValues, context: Context) {
                 style = MaterialTheme.typography.bodySmall,
                 modifier = Modifier.padding(4.dp))
         }
+
         Button(onClick = {
             isUserNameEmpty = userName.isEmpty()
             isEmailEmpty = email.isEmpty()
             isContrasenaEmpty = contrasena.isEmpty()
             isSameContrasena = contrasena == repetirContrasena
-            if (!isUserNameEmpty && !isEmailEmpty && !isContrasenaEmpty && isSameContrasena) {
+
+            validUserName = !symbolsCharacters.containsMatchIn(userName)
+            validEmailFormat = emailFormat.containsMatchIn(email)
+            validFirstName = !symbolsCharacters.containsMatchIn(firstName)
+            validLastName = !symbolsCharacters.containsMatchIn(lastName)
+
+            if (!isUserNameEmpty && !isEmailEmpty &&
+                !isContrasenaEmpty && isSameContrasena &&
+                validUserName && validEmailFormat &&
+                validFirstName && validLastName) {
                 val newUser = User(userName, email, contrasena, firstName, lastName, "")
                 createOrUpdateUser(context, newUser)
                 Toast.makeText(context, "Registro correcto", Toast.LENGTH_SHORT).show()
