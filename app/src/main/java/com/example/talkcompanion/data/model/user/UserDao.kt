@@ -1,4 +1,4 @@
-package com.example.talkcompanion.data.model.user
+ package com.example.talkcompanion.data.model.user
 
 import androidx.room.Dao
 import androidx.room.Insert
@@ -8,9 +8,8 @@ import androidx.room.Query
 interface UserDao {
 
     @Insert
-    suspend fun insertUser(user: UserEntity)
+    suspend fun insertUser(user: UserEntity): Long
 
-    @Suppress("AndroidUnresolvedRoomSqlReference")
-    @Query("SELECT * FROM users")
+    @Query("SELECT * FROM user")
     suspend fun getAllUsers(): List<UserEntity>
 }

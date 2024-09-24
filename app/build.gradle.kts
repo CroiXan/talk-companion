@@ -64,6 +64,7 @@ dependencies {
     implementation(libs.gson)
     implementation(libs.androidx.runtime.livedata)
     implementation(libs.androidx.room.runtime)
+    implementation(libs.androidx.room.ktx)
     annotationProcessor(libs.androidx.room.compiler)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
