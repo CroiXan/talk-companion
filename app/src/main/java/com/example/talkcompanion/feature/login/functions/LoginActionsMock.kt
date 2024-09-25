@@ -32,14 +32,14 @@ fun doLogin(userName: String, password: String, context: Context): Boolean {
     return user != null
 }
 
-fun doLogout(context: Context){
+/*fun doLogout(context: Context){
     removeCurrentUserName(context, "currentUserName")
-}
+}*/
 
-fun isLoggedIn(context: Context): Boolean {
+/*fun isLoggedIn(context: Context): Boolean {
     val currentUserName = getCurrentUserName(context, "currentUserName")
     return currentUserName != null
-}
+}*/
 
 fun findUserByEmail(email: String,context: Context): User {
     val userLists = userList(context)

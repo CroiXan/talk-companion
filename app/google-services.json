@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "810069022268",
+    "project_id": "talkcompanion-a4c81",
+    "storage_bucket": "talkcompanion-a4c81.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:810069022268:android:58555dee5e889adc9d9539",
+        "android_client_info": {
+          "package_name": "com.example.talkcompanion"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAGiZcKlRDKjMOPamVzbq4oYCxr0X_YfLQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
