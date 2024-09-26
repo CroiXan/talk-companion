@@ -1,7 +1,6 @@
 package com.example.talkcompanion.feature.phrase.functions
 
 import android.content.Context
-import android.util.Log
 import com.example.talkcompanion.data.model.Phrase
 import com.example.talkcompanion.feature.login.functions.getCurrentUserName
 import com.example.talkcompanion.feature.usermanagement.functions.getPhraseListMock

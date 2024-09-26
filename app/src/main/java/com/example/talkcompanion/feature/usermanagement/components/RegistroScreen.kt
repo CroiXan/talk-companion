@@ -27,6 +27,7 @@ import androidx.compose.ui.unit.sp
 import com.example.talkcompanion.LoginActivity
 import com.example.talkcompanion.data.model.User
 import com.example.talkcompanion.feature.usermanagement.functions.createOrUpdateUser
+import com.example.talkcompanion.feature.usermanagement.functions.registerUser
 
 @Composable
 fun RegistroScreen(innerPadding: PaddingValues, context: Context) {
@@ -231,11 +232,19 @@ fun RegistroScreen(innerPadding: PaddingValues, context: Context) {
                 !isContrasenaEmpty && isSameContrasena &&
                 validUserName && validEmailFormat &&
                 validFirstName && validLastName) {
-                val newUser = User(userName, email, contrasena, firstName, lastName, "")
-                createOrUpdateUser(context, newUser)
-                Toast.makeText(context, "Registro correcto", Toast.LENGTH_SHORT).show()
-                val intent = Intent(context, LoginActivity::class.java)
-                context.startActivity(intent)
+                //val newUser = User(userName, email, contrasena, firstName, lastName, "")
+                //createOrUpdateUser(context, newUser)
+                registerUser(email, contrasena, userName, firstName, lastName
+                ) { result ->
+                    if (result) {
+                        Toast.makeText(context, "Registro correcto", Toast.LENGTH_SHORT).show()
+                        val intent = Intent(context, LoginActivity::class.java)
+                        context.startActivity(intent)
+                    } else {
+                        Toast.makeText(context, "Error en el Registro", Toast.LENGTH_SHORT).show()
+                    }
+                }
+
             }
         }) {
             Text(text = "Registrarse")
