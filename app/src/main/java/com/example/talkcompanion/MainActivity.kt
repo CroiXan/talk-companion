@@ -33,6 +33,7 @@ import com.example.talkcompanion.data.model.ModalViewModel
 import com.example.talkcompanion.data.model.SpeechResultViewModel
 import com.example.talkcompanion.data.model.UserPhraseViewModel
 import com.example.talkcompanion.feature.login.functions.isLoggedIn
+import com.example.talkcompanion.feature.phrase.functions.getFirebasePhraseListByUserName
 import com.example.talkcompanion.feature.phrase.functions.getPhraseListByUserName
 import com.example.talkcompanion.feature.speech.functions.destroyTextToSpeech
 import com.example.talkcompanion.feature.speech.functions.languageNotFoundException
@@ -113,7 +114,10 @@ class MainActivity : ComponentActivity(), TextToSpeech.OnInitListener  {
     override fun onInit(status: Int) {
         FirebaseApp.initializeApp(this)
 
-        userPhrases.updatePhraseList(getPhraseListByUserName(this))
+        getFirebasePhraseListByUserName(){ result ->
+            userPhrases.updatePhraseList(result)
+        }
+
         try{
 
             if (status == TextToSpeech.SUCCESS) {
@@ -138,7 +142,9 @@ class MainActivity : ComponentActivity(), TextToSpeech.OnInitListener  {
 
     override fun onResume() {
         super.onResume()
-        this.userPhrases.updatePhraseList(getPhraseListByUserName(this))
+        getFirebasePhraseListByUserName(){ result ->
+            userPhrases.updatePhraseList(result)
+        }
     }
 }
 

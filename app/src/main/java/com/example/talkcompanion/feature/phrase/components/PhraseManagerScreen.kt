@@ -22,7 +22,9 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -31,16 +33,22 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.talkcompanion.data.model.Phrase
+import com.example.talkcompanion.data.model.UserPhraseViewModel
+import com.example.talkcompanion.feature.phrase.functions.addFirebasePhraseList
 import com.example.talkcompanion.feature.phrase.functions.addPhraseList
 import com.example.talkcompanion.feature.phrase.functions.deletePhraseById
 import com.example.talkcompanion.feature.phrase.functions.getPhraseListByUserName
 import com.example.talkcompanion.feature.phrase.functions.updateUserPhrases
 
 @Composable
-fun PhraseManagerScreen(context: Context, innerPadding: PaddingValues){
+fun PhraseManagerScreen(context: Context, innerPadding: PaddingValues, userPhrases: UserPhraseViewModel){
 
-    var phraseList by remember { mutableStateOf(getPhraseListByUserName(context).sortedBy { it.orderNumer }) }
+    val phraseList by userPhrases.userPhrases.observeAsState(emptyList())
     var newPhrase by remember { mutableStateOf("") }
+
+    LaunchedEffect(Unit) {
+        phraseList.sortedBy { it.orderNumber }
+    }
 
     Column(modifier = Modifier
         .fillMaxSize()
@@ -62,7 +70,9 @@ fun PhraseManagerScreen(context: Context, innerPadding: PaddingValues){
             Button(
                 onClick = {
                     if (newPhrase !== "") {
-                        phraseList = addPhraseList(context,newPhrase)
+                        addFirebasePhraseList(newPhrase,phraseList){ result ->
+                            userPhrases.updatePhraseList(result)
+                        }
                     }
                 },
                 modifier = Modifier.padding(4.dp)
@@ -81,7 +91,7 @@ fun PhraseManagerScreen(context: Context, innerPadding: PaddingValues){
                     .padding(4.dp)){
                     Row(modifier = Modifier.padding(4.dp),
                         verticalAlignment = Alignment.CenterVertically) {
-                        Text(text = phrase.phrase,
+                        Text(text = phrase.phrase!!,
                             textAlign = TextAlign.Center,
                             modifier = Modifier.padding(4.dp))
                         /*Text(text = (phrase.orderNumer.toString()),
@@ -96,7 +106,9 @@ fun PhraseManagerScreen(context: Context, innerPadding: PaddingValues){
                                 end = 4.dp,
                                 bottom = 4.dp),
                             shape = RoundedCornerShape(100),
-                            onClick = { phraseList = deletePhraseById(context, phrase.id) }) {
+                            onClick = {
+                                //phraseList = deletePhraseById(context, phrase.id)
+                            }) {
                             Icon(
                                 imageVector = Icons.Filled.Delete,
                                 contentDescription = "Borrar Frase"
@@ -109,7 +121,9 @@ fun PhraseManagerScreen(context: Context, innerPadding: PaddingValues){
                                 end = 0.dp,
                                 bottom = 4.dp),
                             shape = RoundedCornerShape(20,0,0,20),
-                            onClick = { phraseList = changePhrasePosition(context, phraseList, phrase.id, false) }) {
+                            onClick = {
+                                //phraseList = changePhrasePosition(context, phraseList, phrase.id, false)
+                            }) {
                             Icon(
                                 imageVector = Icons.Filled.KeyboardArrowDown,
                                 contentDescription = "Bajar Frase"
@@ -122,7 +136,9 @@ fun PhraseManagerScreen(context: Context, innerPadding: PaddingValues){
                                 end = 4.dp,
                                 bottom = 4.dp),
                             shape = RoundedCornerShape(0,20,20,0),
-                            onClick = { phraseList = changePhrasePosition(context, phraseList, phrase.id, true) }) {
+                            onClick = {
+                                //phraseList = changePhrasePosition(context, phraseList, phrase.id, true)
+                            }) {
                             Icon(
                                 imageVector = Icons.Filled.KeyboardArrowUp,
                                 contentDescription = "Subir Frase"
