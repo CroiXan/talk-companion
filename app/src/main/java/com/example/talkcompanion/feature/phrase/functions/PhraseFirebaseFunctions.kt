@@ -16,25 +16,28 @@ fun getFirebasePhraseListByUserName(callback: (result: List<PhraseEntity>) -> Un
             .orderByChild("userId")
             .equalTo(userId)
             .get()
-            .addOnSuccessListener { dataSnapshot ->
+            .addOnCompleteListener  { task ->
                 val phraseList = mutableListOf<PhraseEntity>()
+                if (task.isSuccessful) {
+                    val snapshot = task.result
+                    Log.d("getdatasnapshot", snapshot.exists().toString())
+                    if (snapshot != null && snapshot.exists()) {
 
-                if (dataSnapshot.exists()){
-                    for (phraseSnapshot in dataSnapshot.children){
-                        phraseList.add(PhraseEntity(
-                            (if (phraseSnapshot.child("id").getValue(Int::class.java) != null) phraseSnapshot.child("id").getValue(Int::class.java) else 0)!!,
-                            phraseSnapshot.child("userId").getValue(String::class.java),
-                            phraseSnapshot.child("userName").getValue(String::class.java),
-                            phraseSnapshot.child("phrase").getValue(String::class.java),
-                            phraseSnapshot.child("orderNumber").getValue(Int::class.java)
-                        ))
+                        for (phraseSnapshot in snapshot.children) {
+                            phraseList.add(
+                                PhraseEntity(
+                                    (if (phraseSnapshot.child("id").getValue(Int::class.java) != null) phraseSnapshot.child("id").getValue(Int::class.java) else 0)!!,
+                                    phraseSnapshot.child("userId").getValue(String::class.java),
+                                    phraseSnapshot.child("userName").getValue(String::class.java),
+                                    phraseSnapshot.child("phrase").getValue(String::class.java),
+                                    phraseSnapshot.child("orderNumber").getValue(Int::class.java)
+                                )
+                            )
+                        }
                     }
                 }
-                val result = ArrayList(phraseList)
+                val result = ArrayList(phraseList).sortedBy { it.orderNumber }
                 callback(result)
-            }
-            .addOnFailureListener { e ->
-                callback(ArrayList<PhraseEntity>())
             }
 
     }else{
@@ -44,24 +47,25 @@ fun getFirebasePhraseListByUserName(callback: (result: List<PhraseEntity>) -> Un
 
 fun getPhraseMaxId(callback: (result: Int) -> Unit){
     FirebaseDatabase.getInstance().getReference("Phrases")
-        .orderByChild("id").limitToLast(1)
+        .orderByChild("id")
+        .limitToLast(1)
         .get()
-        .addOnSuccessListener { snapshot ->
-            if (snapshot.exists()) {
-                for (userSnapshot in snapshot.children) {
-                    val user = userSnapshot.getValue(PhraseEntity::class.java)
-                    if (user != null) {
-                        callback(user.id)
-                    }else{
-                        callback(0)
+        .addOnCompleteListener  { task ->
+            val phraseList = mutableListOf<PhraseEntity>()
+            if (task.isSuccessful) {
+                val snapshot = task.result
+                Log.d("getdatasnapshot", snapshot.exists().toString())
+                if (snapshot != null && snapshot.exists()) {
+                    for (childSnapshot in snapshot.children) {
+                        callback((if (childSnapshot.child("id").getValue(Int::class.java) != null) childSnapshot.child("id").getValue(Int::class.java) else 0)!!)
                     }
+                }else{
+                    callback(0)
                 }
-
-            } else {
+            }else{
                 callback(0)
             }
-        }.addOnFailureListener { exception ->
-            callback(0)
+
         }
 }
 
@@ -96,22 +100,60 @@ fun addFirebasePhraseList(
 
 fun updateFirebaseUserPhrases(userPhrases: List<PhraseEntity>){
     val updates = hashMapOf<String, Any>()
+    val fireDatabase = FirebaseDatabase.getInstance().getReference("Phrases")
 
-    for (currentPhrase in userPhrases){
-        if (currentPhrase.phrase!!.isNotEmpty()){
-            updates["/${currentPhrase.id}/phrase"] = currentPhrase.phrase!!
+    fireDatabase.get().addOnSuccessListener { snapshot ->
+        if (snapshot.exists()) {
+            for (childSnapshot in snapshot.children) {
+                val userid = (if (childSnapshot.child("id").getValue(Int::class.java) != null) childSnapshot.child("id").getValue(Int::class.java) else 0)!!
+                val matchPhrase = userPhrases.find { it.id == userid }
+                if (matchPhrase != null) {
+                    updates["/${childSnapshot.key}/phrase"] = matchPhrase.phrase!!
+                    updates["/${childSnapshot.key}/orderNumber"] = matchPhrase.orderNumber!!
+                    Log.d("FirebaseUpdate", "Preparando data para: ${childSnapshot.key} ${matchPhrase.id} ${matchPhrase.phrase} ${matchPhrase.orderNumber}")
+                }
+            }
+
+            fireDatabase.updateChildren(updates).addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    Log.d("FirebaseUpdate", "Actualizacion exitosa de updateFirebaseUserPhrases")
+                } else {
+                    Log.e("FirebaseUpdate", "Error en la actualizacion: ${task.exception?.message}")
+                }
+            }
+        } else {
         }
-        updates["/${currentPhrase.id}/orderNumber"] = currentPhrase.orderNumber!!
+    }.addOnFailureListener { exception ->
     }
 
 }
 
-/*fun deleteFirebasePhraseById(context: Context, phraseId: Int, userPhrases: List<PhraseEntity>): List<Phrase>{
-    updatePhrasePositionsBeforeDelete(context,phraseId)
-    val phraseList = getPhraseList(context)
-    val resultList = phraseList.filter { it.id != phraseId }.toTypedArray()
-    savePhraseListMock(context, Gson().toJson(resultList))
-    return getPhraseListByUserName(context)
+fun deleteFirebasePhraseById(phraseId: Int, userPhrases: List<PhraseEntity>, callback: (result: List<PhraseEntity>) -> Unit){
+    updatePhrasePositionsBeforeDelete(phraseId,userPhrases)
+
+    FirebaseDatabase.getInstance().getReference("Phrases")
+        .orderByChild("id")
+        .equalTo(phraseId.toDouble())
+        .get()
+        .addOnCompleteListener  { task ->
+            val phraseList = mutableListOf<PhraseEntity>()
+            if (task.isSuccessful) {
+                val snapshot = task.result
+                Log.d("getdatasnapshot", snapshot.exists().toString())
+                if (snapshot != null && snapshot.exists()) {
+                    for (childSnapshot in snapshot.children) {
+                        childSnapshot.ref.removeValue();
+                    }
+                    getFirebasePhraseListByUserName(){ result ->
+                        callback(result)
+                    }
+                }else{
+                    callback(userPhrases)
+                }
+            }else{
+                callback(userPhrases)
+            }
+        }
 }
 
 private fun updatePhrasePositionsBeforeDelete(phraseId: Int, userPhrases: List<PhraseEntity>){
@@ -123,4 +165,4 @@ private fun updatePhrasePositionsBeforeDelete(phraseId: Int, userPhrases: List<P
         }
     }
     updateFirebaseUserPhrases(userPhrases)
-}*/
+}

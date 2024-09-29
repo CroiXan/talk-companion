@@ -1,6 +1,7 @@
 package com.example.talkcompanion.feature.phrase.components
 
 import android.content.Context
+import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -34,10 +35,13 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.talkcompanion.data.model.Phrase
 import com.example.talkcompanion.data.model.UserPhraseViewModel
+import com.example.talkcompanion.data.model.phrase.PhraseEntity
 import com.example.talkcompanion.feature.phrase.functions.addFirebasePhraseList
 import com.example.talkcompanion.feature.phrase.functions.addPhraseList
+import com.example.talkcompanion.feature.phrase.functions.deleteFirebasePhraseById
 import com.example.talkcompanion.feature.phrase.functions.deletePhraseById
 import com.example.talkcompanion.feature.phrase.functions.getPhraseListByUserName
+import com.example.talkcompanion.feature.phrase.functions.updateFirebaseUserPhrases
 import com.example.talkcompanion.feature.phrase.functions.updateUserPhrases
 
 @Composable
@@ -107,7 +111,9 @@ fun PhraseManagerScreen(context: Context, innerPadding: PaddingValues, userPhras
                                 bottom = 4.dp),
                             shape = RoundedCornerShape(100),
                             onClick = {
-                                //phraseList = deletePhraseById(context, phrase.id)
+                                deleteFirebasePhraseById(phrase.id,phraseList){ result ->
+                                    userPhrases.updatePhraseList(result)
+                                }
                             }) {
                             Icon(
                                 imageVector = Icons.Filled.Delete,
@@ -122,7 +128,7 @@ fun PhraseManagerScreen(context: Context, innerPadding: PaddingValues, userPhras
                                 bottom = 4.dp),
                             shape = RoundedCornerShape(20,0,0,20),
                             onClick = {
-                                //phraseList = changePhrasePosition(context, phraseList, phrase.id, false)
+                                userPhrases.updatePhraseList(changePhrasePosition(phraseList, phrase.id, false))
                             }) {
                             Icon(
                                 imageVector = Icons.Filled.KeyboardArrowDown,
@@ -137,7 +143,7 @@ fun PhraseManagerScreen(context: Context, innerPadding: PaddingValues, userPhras
                                 bottom = 4.dp),
                             shape = RoundedCornerShape(0,20,20,0),
                             onClick = {
-                                //phraseList = changePhrasePosition(context, phraseList, phrase.id, true)
+                                userPhrases.updatePhraseList(changePhrasePosition(phraseList, phrase.id, true))
                             }) {
                             Icon(
                                 imageVector = Icons.Filled.KeyboardArrowUp,
@@ -154,26 +160,27 @@ fun PhraseManagerScreen(context: Context, innerPadding: PaddingValues, userPhras
 
 }
 
-private fun changePhrasePosition(context: Context, phraseList: List<Phrase>,phraseId: Int, isUp: Boolean): List<Phrase>{
+private fun changePhrasePosition( phraseList: List<PhraseEntity>,phraseId: Int, isUp: Boolean): List<PhraseEntity>{
     val indexOfPhraseId = phraseList.indexOfFirst { it.id == phraseId }
-
+    Log.d("changePhrasePosition","index ${indexOfPhraseId} phraseId ${phraseId}")
     if (indexOfPhraseId >= 0){
         if (isUp){
-            val indexUpperPhrase = phraseList.indexOfFirst { it.orderNumer == phraseList[indexOfPhraseId].orderNumer - 1 }
+            val indexUpperPhrase = phraseList.indexOfFirst { it.orderNumber == phraseList[indexOfPhraseId].orderNumber!! - 1 }
             if(indexUpperPhrase >= 0){
-                phraseList[indexOfPhraseId].orderNumer -= 1
-                phraseList[indexUpperPhrase].orderNumer += 1
+                phraseList[indexOfPhraseId].orderNumber = phraseList[indexOfPhraseId].orderNumber!! - 1
+                phraseList[indexUpperPhrase].orderNumber = phraseList[indexOfPhraseId].orderNumber!! + 1
             }
 
         }else{
-            val indexLowerPhrase = phraseList.indexOfFirst { it.orderNumer == phraseList[indexOfPhraseId].orderNumer + 1 }
+            val indexLowerPhrase = phraseList.indexOfFirst { it.orderNumber == phraseList[indexOfPhraseId].orderNumber!! + 1 }
             if(indexLowerPhrase >= 0) {
-                phraseList[indexOfPhraseId].orderNumer += 1
-                phraseList[indexLowerPhrase].orderNumer -= 1
+                phraseList[indexOfPhraseId].orderNumber = phraseList[indexOfPhraseId].orderNumber!! + 1
+                phraseList[indexLowerPhrase].orderNumber = phraseList[indexOfPhraseId].orderNumber!! - 1
             }
         }
     }
 
-    updateUserPhrases(context, phraseList)
-    return phraseList.sortedBy { it.orderNumer }
+    //updateUserPhrases(context, phraseList)
+    updateFirebaseUserPhrases(phraseList)
+    return phraseList.sortedBy { it.orderNumber }
 }
