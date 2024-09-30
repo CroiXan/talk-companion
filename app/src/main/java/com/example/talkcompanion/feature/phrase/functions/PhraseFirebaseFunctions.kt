@@ -146,11 +146,17 @@ fun deleteFirebasePhraseById(phraseId: Int, userPhrases: List<PhraseEntity>, cal
                 Log.d("getdatasnapshot", snapshot.exists().toString())
                 if (snapshot != null && snapshot.exists()) {
                     for (childSnapshot in snapshot.children) {
-                        childSnapshot.ref.removeValue();
+                        childSnapshot.ref.removeValue()
+                            .addOnSuccessListener{ value ->
+                                getFirebasePhraseListByUserName(){ result ->
+                                    callback(result)
+                                }
+                            }
+                            .addOnFailureListener { value ->
+                                callback(userPhrases)
+                            }
                     }
-                    getFirebasePhraseListByUserName(){ result ->
-                        callback(result)
-                    }
+
                 }else{
                     callback(userPhrases)
                 }

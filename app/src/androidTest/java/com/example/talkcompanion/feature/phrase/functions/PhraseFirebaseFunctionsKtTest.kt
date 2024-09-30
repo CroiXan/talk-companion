@@ -26,12 +26,12 @@ class PhraseFirebaseFunctionsKtTest {
 
     @Before
     fun setUp() = runBlocking {
-        //Inicio de sesion con un usuario solo para pruebas
         mockAuth = FirebaseAuth.getInstance()
         mockDatabase = FirebaseDatabase.getInstance()
         mockDataReference = mockDatabase.getReference("Phrases")
         userPhrases = listOf()
         cleanData()
+        //Se espera a que termine el borrado
         wait()
     }
 
@@ -39,15 +39,20 @@ class PhraseFirebaseFunctionsKtTest {
     fun getFirebasePhraseListByUserName() {
         val future = CompletableFuture<List<PhraseEntity>?>()
 
+        //Se realiza login a firebase con usuario de prueba
         mockAuth.signInWithEmailAndPassword("testing-junit@testing.com","Test.1234")
             .addOnCompleteListener { task ->
                 if (task.isComplete){
+
+                    //Se guardan de manera secuencial 3 frasdes
                     addFirebasePhraseList("Prueba1",listOf()){ result1 ->
                         Log.d("testid",mockAuth.currentUser?.uid+"")
                         addFirebasePhraseList("Prueba2",result1){ result2 ->
                             Log.d("testid",mockAuth.currentUser?.uid+"")
                             addFirebasePhraseList("Prueba3",result2){ result3 ->
                                 Log.d("testid",mockAuth.currentUser?.uid+"")
+
+                                //Se hace un get para obetener todas las frases
                                 getFirebasePhraseListByUserName(){ result4 ->
                                     future.complete(result4)
                                 }
@@ -66,18 +71,25 @@ class PhraseFirebaseFunctionsKtTest {
         val futureCurrentMax = CompletableFuture<Int>()
         val futureResultMax = CompletableFuture<Int>()
 
+        //Se realiza login a firebase con usuario de prueba
         mockAuth.signInWithEmailAndPassword("testing-junit@testing.com","Test.1234")
             .addOnCompleteListener { task ->
                 if (task.isComplete){
+
+                    //Se obtiene el id maximo actual
                     getPhraseMaxId(){ result ->
                         futureCurrentMax.complete(result)
                         Log.d("max","Actual "+result)
+
+                        //Se guardan 3 frases de forma secuencial
                         addFirebasePhraseList("Prueba1",listOf()){ result1 ->
                             Log.d("testid",mockAuth.currentUser?.uid+"")
                             addFirebasePhraseList("Prueba2",result1){ result2 ->
                                 Log.d("testid",mockAuth.currentUser?.uid+"")
                                 addFirebasePhraseList("Prueba3",result2){ result3 ->
                                     Log.d("testid",mockAuth.currentUser?.uid+"")
+
+                                    //Tras el guardado de obtiene nuevamente el maximo
                                     getPhraseMaxId(){ result4 ->
                                         Log.d("max","Resultado "+result4)
                                         futureResultMax.complete(result4)
@@ -97,10 +109,15 @@ class PhraseFirebaseFunctionsKtTest {
         var fraseAgregada : PhraseEntity? = null
         val future = CompletableFuture<PhraseEntity?>()
 
+        //Se realiza login a firebase con usuario de prueba
         mockAuth.signInWithEmailAndPassword("testing-junit@testing.com","Test.1234")
             .addOnCompleteListener { task ->
                 if (task.isComplete){
+
+                    //Se guarda nueva frase
                     addFirebasePhraseList("Prueba1",listOf()){ result ->
+
+                        //Se busca la nueva frase en el resultado
                         fraseAgregada = result.find { it.phrase == "Prueba1" }
                         future.complete(fraseAgregada)
                     }
@@ -116,14 +133,24 @@ class PhraseFirebaseFunctionsKtTest {
         var fraseAgregada : PhraseEntity? = null
         val future = CompletableFuture<PhraseEntity?>()
 
+        //Se realiza login a firebase con usuario de prueba
         mockAuth.signInWithEmailAndPassword("testing-junit@testing.com","Test.1234")
             .addOnCompleteListener { task ->
                 if (task.isComplete){
+
+                    //Se guarda nueva frase
                     addFirebasePhraseList("Prueba1",listOf()){ result ->
                         if(result.isNotEmpty()){
+                            //Se modifica la nueva frase
                             result[0].orderNumber = 10
+
+                            //Se actualizan las frases
                             updateFirebaseUserPhrases(result){ isSuccess ->
+
+                                //Se hace un get las frases
                                 getFirebasePhraseListByUserName(){ result2 ->
+
+                                    //Se busca la frase editada
                                     fraseAgregada = result2.find { it.phrase == "Prueba1" }
                                     future.complete(fraseAgregada)
                                 }
@@ -140,11 +167,43 @@ class PhraseFirebaseFunctionsKtTest {
 
     @Test
     fun deleteFirebasePhraseById() {
+        val future = CompletableFuture<PhraseEntity?>()
+
+        //Se realiza login a firebase con usuario de prueba
+        mockAuth.signInWithEmailAndPassword("testing-junit@testing.com","Test.1234")
+            .addOnCompleteListener { task ->
+                if (task.isComplete){
+
+                    //Se guarda nueva frase
+                    addFirebasePhraseList("Prueba1",listOf()){ result ->
+
+                        //Se busca la nueva frase en el resultado
+                        val fraseAgregada = result.find { it.phrase == "Prueba1" }
+
+                        //Se hace el borrado de la frase guardadd
+                        Log.d("delete","id eliminado "+(fraseAgregada?.id ?: 0))
+                        deleteFirebasePhraseById(fraseAgregada?.id ?: 0,result){ result2 ->
+
+                            //Se hace una llamado a las frases del usuario
+                            getFirebasePhraseListByUserName(){ result3 ->
+
+                                //Se busca nuevamente la frase
+                                val fraseBorrada = result3.find { it.phrase == "Prueba1" }
+                                future.complete(fraseBorrada)
+                            }
+                        }
+                    }
+                }
+            }
+
+
+        assertNull("Prueba Eliminar Frase",future.get())
+
     }
 
-    fun cleanData() {
+    private fun cleanData() {
 
-        //Borrar todas las frases creadas
+        //Borrar todas las frases creadas por el usuario de prueba
         mockAuth.signInWithEmailAndPassword("testing-junit@testing.com","Test.1234")
             .addOnCompleteListener { task ->
                 if (task.isComplete){
