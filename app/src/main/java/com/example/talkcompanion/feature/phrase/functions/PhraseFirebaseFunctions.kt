@@ -98,7 +98,7 @@ fun addFirebasePhraseList(
 
 }
 
-fun updateFirebaseUserPhrases(userPhrases: List<PhraseEntity>){
+fun updateFirebaseUserPhrases(userPhrases: List<PhraseEntity>, isSuccess: (isSuccess: Boolean) -> Unit){
     val updates = hashMapOf<String, Any>()
     val fireDatabase = FirebaseDatabase.getInstance().getReference("Phrases")
 
@@ -117,13 +117,17 @@ fun updateFirebaseUserPhrases(userPhrases: List<PhraseEntity>){
             fireDatabase.updateChildren(updates).addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     Log.d("FirebaseUpdate", "Actualizacion exitosa de updateFirebaseUserPhrases")
+                    isSuccess(true)
                 } else {
                     Log.e("FirebaseUpdate", "Error en la actualizacion: ${task.exception?.message}")
+                    isSuccess(false)
                 }
             }
         } else {
+            isSuccess(false)
         }
     }.addOnFailureListener { exception ->
+        isSuccess(false)
     }
 
 }
@@ -164,5 +168,5 @@ private fun updatePhrasePositionsBeforeDelete(phraseId: Int, userPhrases: List<P
             currentPhrase.orderNumber = currentPhrase.orderNumber!! - 1
         }
     }
-    updateFirebaseUserPhrases(userPhrases)
+    updateFirebaseUserPhrases(userPhrases){}
 }

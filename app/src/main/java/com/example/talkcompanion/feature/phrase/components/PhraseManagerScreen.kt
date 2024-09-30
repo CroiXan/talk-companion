@@ -181,6 +181,7 @@ private fun changePhrasePosition( phraseList: List<PhraseEntity>,phraseId: Int, 
     }
 
     //updateUserPhrases(context, phraseList)
-    updateFirebaseUserPhrases(phraseList)
+    updateFirebaseUserPhrases(phraseList){}
+
     return phraseList.sortedBy { it.orderNumber }
 }
