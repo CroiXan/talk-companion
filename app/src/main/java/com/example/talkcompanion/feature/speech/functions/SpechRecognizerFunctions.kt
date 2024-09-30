@@ -2,10 +2,9 @@ package com.example.talkcompanion.feature.speech.functions
 
 import android.content.Intent
 import android.os.Bundle
-import android.speech.SpeechRecognizer
 import android.speech.RecognitionListener
 import android.speech.RecognizerIntent
-import android.util.Log
+import android.speech.SpeechRecognizer
 import com.example.talkcompanion.data.model.SpeechResultViewModel
 
 fun recognitionListener(speechResult: SpeechResultViewModel): RecognitionListener{

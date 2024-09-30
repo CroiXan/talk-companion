@@ -79,9 +79,9 @@ fun DashboardMockScreen(innerPadding: PaddingValues, context: Context, textToSpe
         ){
             LazyVerticalGrid(columns = GridCells.Fixed(2)) {
                 items(userPhrases) { phrase ->
-                    Button(onClick = { speak(phrase.phrase, textToSpeechInstance) },
+                    Button(onClick = { speak(phrase.phrase!!, textToSpeechInstance) },
                         modifier = Modifier.padding(4.dp)) {
-                        Text(text = phrase.phrase)
+                        Text(text = phrase.phrase!!)
                     }
                 }
             }

@@ -92,7 +92,7 @@ fun TopBarComponent(showMenu: Boolean, showBack: Boolean, context: Context,scrol
                         DropdownMenuItem(
                             text = { Text("Cerrar Sesión") },
                             onClick = {
-                                doLogout(context)
+                                doLogout()
                                 val intent = Intent(context, LoginActivity::class.java)
                                 context.startActivity(intent)
                                 expandirMenu = false

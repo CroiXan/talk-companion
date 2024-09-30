@@ -74,13 +74,16 @@ fun LoginScreen(innerPadding: PaddingValues,context: Context) {
         )
         Button(
             onClick = {
-                if( doLogin(email, password, context) ){
-                    Toast.makeText(context, "Login correcto", Toast.LENGTH_SHORT).show()
-                    val intent = Intent(context, MainActivity::class.java)
-                    context.startActivity(intent)
-                }else{
-                    Toast.makeText(context, "Login incorrecto", Toast.LENGTH_SHORT).show()
-                } },
+                    doLogin(email, password, callback = { result ->
+                        if( result ){
+                            Toast.makeText(context, "Login correcto", Toast.LENGTH_SHORT).show()
+                            val intent = Intent(context, MainActivity::class.java)
+                            context.startActivity(intent)
+                        }else{
+                            Toast.makeText(context, "Login incorrecto", Toast.LENGTH_SHORT).show()
+                        }
+                    })
+                      },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(8.dp)
