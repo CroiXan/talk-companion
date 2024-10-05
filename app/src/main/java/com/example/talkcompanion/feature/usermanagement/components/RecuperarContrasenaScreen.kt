@@ -25,7 +25,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.talkcompanion.LoginActivity
 import com.example.talkcompanion.data.model.User
+import com.example.talkcompanion.data.model.user.UserEntity
 import com.example.talkcompanion.feature.login.functions.findUserByEmail
+import com.example.talkcompanion.feature.login.functions.getUserByEmail
+import com.example.talkcompanion.feature.login.functions.updateUser
 import com.example.talkcompanion.feature.usermanagement.functions.createOrUpdateUser
 
 @Composable
@@ -48,7 +51,7 @@ fun RecuperarScreen(context: Context, innerPadding: PaddingValues){
     }
 
     var foundUser by remember {
-        mutableStateOf(User("", "", "", "", "", ""))
+        mutableStateOf(UserEntity("", "", "", "", "", "",""))
     }
 
     var mostrarCamposEnvio by rememberSaveable { mutableStateOf(true) }
@@ -80,9 +83,12 @@ fun RecuperarScreen(context: Context, innerPadding: PaddingValues){
             )
             Button(
                 onClick = {
-                    foundUser = findUserByEmail(email,context)
-                    mostrarCamposEnvio = false
-                    mostrarCamposComprobarCodigo = true},
+                    getUserByEmail(email){ result ->
+                        foundUser = result
+                        mostrarCamposEnvio = false
+                        mostrarCamposComprobarCodigo = true
+                    }
+                },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(8.dp)
@@ -155,10 +161,16 @@ fun RecuperarScreen(context: Context, innerPadding: PaddingValues){
                 onClick = {
                     if(contrasena == repetirContrasena){
                         foundUser.password = contrasena
-                        Toast.makeText(context, "Contraseña cambiada", Toast.LENGTH_SHORT).show()
-                        createOrUpdateUser(context, foundUser)
-                        val intent = Intent(context, LoginActivity::class.java)
-                        context.startActivity(intent)
+                        updateUser(foundUser){ result ->
+                            if(result){
+                                Toast.makeText(context, "Contraseña cambiada", Toast.LENGTH_SHORT).show()
+                                val intent = Intent(context, LoginActivity::class.java)
+                                context.startActivity(intent)
+                            }else{
+                                Toast.makeText(context, "Error al actualizar contraseña", Toast.LENGTH_SHORT).show()
+                            }
+                        }
+
                     }else{
                         Toast.makeText(context, "Las contraseñas no coinciden", Toast.LENGTH_SHORT).show()
                     }
